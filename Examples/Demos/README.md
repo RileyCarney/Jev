@@ -1,12 +1,12 @@
 # Jev PowerShell demos
 
-Each demo is a small, runnable example of using Jev from PowerShell. These PowerShell ports are inspired by the [ThinkThen demos](https://github.com/botassembly/thinkthen/tree/main/demos); each demo README links to its source. The scripts use the Jev module, make live requests, and include sample input. Set `TYPESAFE_API_KEY` before running a demo. Start at the repository root unless its README says otherwise.
+Each demo is a small, runnable example of using Jev from PowerShell. These PowerShell ports are inspired by the [ThinkThen demos](https://github.com/botassembly/thinkthen/tree/main/demos). The scripts use the Jev module, make live requests, and include sample input. Set `TYPESAFE_API_KEY` before running a demo. Start at the repository root unless its README says otherwise.
 
 ## Start with these
 
 | # | Demo | What it shows |
 |---|---|---|
-| 01 | [Refund gate](01-refund-gate/README.md) | Ask a yes/no question, then let PowerShell choose a branch. |
+| 01 | [Refund gate](01-refund-gate/README.md) | Pipe text into a small yes/no function and print a Boolean. |
 | 02 | [Route a ticket](02-route-a-ticket/README.md) | Choose a category, apply a confidence threshold, and route it with `switch`. |
 | 03 | [Grep for meaning](03-grep-for-meaning/README.md) | Keep issue reports by meaning rather than exact words. |
 | 15 | [Find the line](15-find-the-line/README.md) | Choose the best matching line from a bounded document in one call. |
