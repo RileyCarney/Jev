@@ -5,4 +5,4 @@ Import-Module "$PSScriptRoot/../../../Jev.psd1"
 @'
 I renewed once this morning, but my card shows two charges.
 Please refund the duplicate.
-'@ | Test-Jev -Question 'Does the customer ask for a refund?'
+'@ | Test-Jev 'Does the customer ask for a refund?'

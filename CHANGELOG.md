@@ -2,6 +2,16 @@
 
 All notable changes to Jev are documented here.
 
+## [0.3.1] - 2026-10-03
+
+### Added
+
+- GitHub Actions workflow to validate the module manifest and run Pester tests on pushes, pull requests, and manual runs.
+
+### Fixed
+
+- `Test-Jev` binds the first positional argument to `Question` and the second to `Threshold`, leaving `State` for pipeline input or `-State`.
+
 ## [0.3.0] - 2026-10-02
 
 ### Added

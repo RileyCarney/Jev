@@ -67,7 +67,7 @@ $question = New-JevQuestion -Name pageOnCall -Type Noul `
 
 ## Current status
 
-The `0.3.0` preview adds `Test-Jev` for pipeline-friendly yes/no checks and a set of teaching-focused PowerShell demos. The API and examples may continue to evolve as Jev develops.
+The `0.3.1` preview fixes positional arguments for `Test-Jev`: pipe in the input, pass the question first, and optionally pass a threshold second. Teaching-focused PowerShell demos are available under `Examples/Demos`. The API and examples may continue to evolve as Jev develops.
 
 ## Planned usage
 
@@ -100,13 +100,15 @@ For a yes/no check where a Boolean is enough, use `Test-Jev`:
 
 ```powershell
 'The customer says they were charged twice and asks for a refund.' |
-    Test-Jev -Question 'Does the customer ask for a refund?'
+    Test-Jev 'Does the customer ask for a refund?'
 # True
 ```
 
 `Test-Jev` compares Jev's yes probability with `-Threshold` (default `0.5`) and
 returns `$true` or `$false`. It makes one live request for each piped state, so
 answers may vary. Use `Invoke-Jev` when you need the probability or full response.
+The question and threshold also accept positional arguments:
+`$messages | Test-Jev 'Should this be escalated?' 0.8`.
 
 ```powershell
 Invoke-Jev -State $feedback -Question $questions -AsJson

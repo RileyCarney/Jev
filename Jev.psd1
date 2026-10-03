@@ -1,6 +1,6 @@
 @{
     RootModule        = 'Jev.psm1'
-    ModuleVersion     = '0.3.0'
+    ModuleVersion     = '0.3.1'
     GUID              = '8b4efb8e-e7e3-4cc8-82ab-ad9314c2980a'
     Author            = 'Jev contributors'
     CompanyName       = ''
@@ -18,7 +18,7 @@
             RepositoryUri = 'https://github.com/dfinke/Jev'
             LicenseUri    = 'https://github.com/dfinke/Jev/blob/main/LICENSE'
             IconUri       = 'https://raw.githubusercontent.com/dfinke/Jev/main/assets/jev-icon.png'
-            ReleaseNotes  = 'Adds Test-Jev for pipeline-friendly yes/no checks and a set of teaching-focused PowerShell demos.'
+            ReleaseNotes  = 'Fixes Test-Jev positional arguments: pipe input and pass the question first, with an optional threshold second. Named parameters remain supported.'
         }
     }
 }
