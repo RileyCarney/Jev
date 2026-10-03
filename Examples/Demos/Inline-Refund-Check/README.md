@@ -1,6 +1,6 @@
 # Inline refund check
 
-Define a small PowerShell function that asks Jev a yes/no question, then pipe a message straight into it and print a Boolean result.
+Pipe a customer message into `Test-Jev` and print a Boolean result for a yes/no question.
 
 With PowerShell 7 and `TYPESAFE_API_KEY` configured, run from the repository root:
 
@@ -9,6 +9,6 @@ With PowerShell 7 and `TYPESAFE_API_KEY` configured, run from the repository roo
 # True
 ```
 
-`Test-Jev` is local to this example. It uses the Jev module to get a Noul probability, then compares it with `0.5` and outputs only `True` or `False`. That Boolean can go straight into an `if` statement or another PowerShell pipeline.
+`Test-Jev` asks a Noul question and compares Jev's yes probability with `0.5`, outputting only `True` or `False`. That Boolean can go straight into an `if` statement or another PowerShell pipeline. Each input makes a live request, so the result can vary.
 
-The output is illustrative: each run makes a live Jev request, so the answer can vary. Request errors stop the script.
+Request errors stop the script.

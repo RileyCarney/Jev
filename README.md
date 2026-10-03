@@ -96,6 +96,18 @@ is raised to a top-level property for easy pipeline use, while the full
 Use `-AsJson` to display the result as JSON while exploring; combine it with
 `-Raw` to see the raw API response as JSON.
 
+For a yes/no check where a Boolean is enough, use `Test-Jev`:
+
+```powershell
+'The customer says they were charged twice and asks for a refund.' |
+    Test-Jev -Question 'Does the customer ask for a refund?'
+# True
+```
+
+`Test-Jev` compares Jev's yes probability with `-Threshold` (default `0.5`) and
+returns `$true` or `$false`. It makes one live request for each piped state, so
+answers may vary. Use `Invoke-Jev` when you need the probability or full response.
+
 ```powershell
 Invoke-Jev -State $feedback -Question $questions -AsJson
 Invoke-Jev -State $feedback -Question $questions -Raw -AsJson

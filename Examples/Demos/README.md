@@ -10,7 +10,7 @@ Each demo is a small, runnable example of using Jev from PowerShell. These Power
 | 02 | [Route a ticket](02-route-a-ticket/README.md) | Choose a category, apply a confidence threshold, and route it with `switch`. |
 | 03 | [Grep for meaning](03-grep-for-meaning/README.md) | Keep issue reports by meaning rather than exact words. |
 | 15 | [Find the line](15-find-the-line/README.md) | Choose the best matching line from a bounded document in one call. |
-| PS | [Inline refund check](Inline-Refund-Check/README.md) | Wrap a Noul question in a small pipeline-friendly `Test-Jev` function. |
+| PS | [Inline refund check](Inline-Refund-Check/README.md) | Use the pipeline-friendly `Test-Jev` command to return a Boolean. |
 
 ## Gates and workflows
 

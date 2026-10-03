@@ -2,6 +2,12 @@
 
 All notable changes to Jev are documented here.
 
+## [Unreleased]
+
+### Added
+
+- `Test-Jev` for pipeline-friendly yes/no checks that return a Boolean at a caller-selected probability threshold.
+
 ## [0.2.0] - 2026-09-24
 
 ### Added
