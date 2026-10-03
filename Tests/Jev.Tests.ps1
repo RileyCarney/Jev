@@ -123,6 +123,40 @@ Describe 'Jev module' {
         $result | Should -BeOfType [bool]
     }
 
+    It 'accepts a positional question with piped reviews' {
+        Mock -ModuleName Jev Invoke-JevDecision {
+            param($State, $Questions)
+
+            $Questions.answer.instructions | Should -Be 'Is this a complaint?'
+            $probability = switch ([string] $State) {
+                'Arrived a day early. Thank you!' { 0.1 }
+                'The zipper broke the first time I used it.' { 0.95 }
+                'Does this come in blue?' { 0.2 }
+                'The strap snapped on day two.' { 0.7 }
+                default { throw "Unexpected state: $State" }
+            }
+            [pscustomobject]@{
+                answers = [pscustomobject]@{
+                    answer = [pscustomobject]@{ noul = $probability }
+                }
+            }
+        }
+
+        $reviews = @(
+            'Arrived a day early. Thank you!'
+            'The zipper broke the first time I used it.'
+            'Does this come in blue?'
+            'The strap snapped on day two.'
+        )
+
+        $results = @($reviews | Test-Jev 'Is this a complaint?')
+        $results | Should -Be @($false, $true, $false, $true)
+
+        $strictResults = @($reviews | Test-Jev 'Is this a complaint?' 0.8)
+        $strictResults | Should -Be @($false, $true, $false, $false)
+        Should -Invoke Invoke-JevDecision -ModuleName Jev -Exactly 8 -Scope It
+    }
+
     It 'creates a Choice question from criteria' {
         $criteria = [ordered]@{
             support = 'Route to support'
