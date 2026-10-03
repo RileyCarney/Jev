@@ -67,7 +67,7 @@ $question = New-JevQuestion -Name pageOnCall -Type Noul `
 
 ## Current status
 
-The `0.2.0` preview adds a yes/no question helper, array `.Jev()` method, JSON output, and new examples. The API and examples may continue to evolve as Jev develops.
+The `0.3.0` preview adds `Test-Jev` for pipeline-friendly yes/no checks and a set of teaching-focused PowerShell demos. The API and examples may continue to evolve as Jev develops.
 
 ## Planned usage
 
