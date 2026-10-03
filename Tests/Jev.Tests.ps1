@@ -14,7 +14,8 @@ Describe 'Jev module' {
         $commands | Should -Contain 'Invoke-Jev'
         $commands | Should -Contain 'New-JevQuestion'
         $commands | Should -Contain 'New-JevYesNoQuestion'
-        $commands.Count | Should -Be 3
+        $commands | Should -Contain 'Test-Jev'
+        $commands.Count | Should -Be 4
     }
 
     It 'uses State as the canonical input parameter with a legacy alias' {
@@ -77,6 +78,49 @@ Describe 'Jev module' {
         $question.Instructions | Should -Be 'Should the on-call engineer be paged now?'
         $question.Criteria['true'] | Should -Be 'Customers cannot complete purchases'
         $question.Criteria['false'] | Should -Be 'Purchases are working normally'
+    }
+
+    It 'returns one thresholded Boolean for each piped state' {
+        Mock -ModuleName Jev Invoke-JevDecision {
+            param($State, $Questions, $Model)
+
+            $probability = if ([string] $State -like '*charged twice*') { 0.91 } else { 0.27 }
+            [pscustomobject] [ordered]@{
+                answers = [ordered]@{
+                    answer = [pscustomobject] [ordered]@{
+                        type = 'noul'
+                        noul = $probability
+                    }
+                }
+            }
+        }
+
+        $states = @(
+            'The customer was charged twice and asks for a refund.'
+            'The customer asks whether the package has shipped.'
+        )
+        $results = @($states | Test-Jev -Question 'Does the customer ask for a refund?' -Threshold 0.8)
+
+        $results.Count | Should -Be 2
+        $results[0] | Should -BeTrue
+        $results[0] | Should -BeOfType [bool]
+        $results[1] | Should -BeFalse
+        Should -Invoke Invoke-JevDecision -ModuleName Jev -Exactly 2 -Scope It
+    }
+
+    It 'accepts a named state and uses the default 0.5 threshold' {
+        Mock -ModuleName Jev Invoke-JevDecision {
+            [pscustomobject] [ordered]@{
+                answers = [ordered]@{
+                    answer = [pscustomobject] [ordered]@{ type = 'noul'; noul = 0.6 }
+                }
+            }
+        }
+
+        $result = Test-Jev -State 'The customer requests a refund.' -Question 'Does the customer ask for a refund?'
+
+        $result | Should -BeTrue
+        $result | Should -BeOfType [bool]
     }
 
     It 'creates a Choice question from criteria' {

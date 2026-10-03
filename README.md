@@ -67,7 +67,7 @@ $question = New-JevQuestion -Name pageOnCall -Type Noul `
 
 ## Current status
 
-The `0.2.0` preview adds a yes/no question helper, array `.Jev()` method, JSON output, and new examples. The API and examples may continue to evolve as Jev develops.
+The `0.3.0` preview adds `Test-Jev` for pipeline-friendly yes/no checks and a set of teaching-focused PowerShell demos. The API and examples may continue to evolve as Jev develops.
 
 ## Planned usage
 
@@ -96,6 +96,18 @@ is raised to a top-level property for easy pipeline use, while the full
 Use `-AsJson` to display the result as JSON while exploring; combine it with
 `-Raw` to see the raw API response as JSON.
 
+For a yes/no check where a Boolean is enough, use `Test-Jev`:
+
+```powershell
+'The customer says they were charged twice and asks for a refund.' |
+    Test-Jev -Question 'Does the customer ask for a refund?'
+# True
+```
+
+`Test-Jev` compares Jev's yes probability with `-Threshold` (default `0.5`) and
+returns `$true` or `$false`. It makes one live request for each piped state, so
+answers may vary. Use `Invoke-Jev` when you need the probability or full response.
+
 ```powershell
 Invoke-Jev -State $feedback -Question $questions -AsJson
 Invoke-Jev -State $feedback -Question $questions -Raw -AsJson
@@ -117,6 +129,8 @@ keeps the input details next to the response and builds a readable summary that
 puts the message next to each decision. Set `TYPESAFE_API_KEY` before running it.
 
 Additional examples:
+
+- [PowerShell demos](Examples/Demos/README.md) collects the teaching-focused demos.
 
 - [`Examples/RefundTriage.ps1`](Examples/RefundTriage.ps1) follows TypeSafe's refund request example.
 - [`Examples/SecurityIncidentTriage.ps1`](Examples/SecurityIncidentTriage.ps1) turns a security alert and its context into a response choice.

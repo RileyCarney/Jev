@@ -2,6 +2,17 @@
 
 All notable changes to Jev are documented here.
 
+## [0.3.0] - 2026-10-02
+
+### Added
+
+- `Test-Jev` for pipeline-friendly yes/no checks that return a Boolean at a caller-selected probability threshold.
+- Teaching-focused PowerShell demos ported from ThinkThen, with sample inputs and a categorized demos index.
+
+### Documentation
+
+- Documented `Test-Jev` behavior, thresholds, and per-input live requests.
+
 ## [0.2.0] - 2026-09-24
 
 ### Added
