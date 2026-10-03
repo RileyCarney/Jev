@@ -7,7 +7,7 @@
     Copyright         = '(c) 2026 Doug Finke'
     Description       = 'Turn unstructured input into consistent, structured decisions from PowerShell.'
     PowerShellVersion = '7.0'
-    FunctionsToExport = @('New-JevQuestion', 'New-JevYesNoQuestion', 'Invoke-Jev', 'Test-Jev')
+    FunctionsToExport = @('New-JevQuestion', 'New-JevYesNoQuestion', 'Invoke-Jev', 'Test-Jev', 'Select-Jev', 'Add-JevAnnotation')
     CmdletsToExport   = @()
     VariablesToExport = @()
     AliasesToExport   = @()
@@ -18,7 +18,7 @@
             RepositoryUri = 'https://github.com/dfinke/Jev'
             LicenseUri    = 'https://github.com/dfinke/Jev/blob/main/LICENSE'
             IconUri       = 'https://raw.githubusercontent.com/dfinke/Jev/main/assets/jev-icon.png'
-            ReleaseNotes  = 'Fixes Test-Jev positional arguments: pipe input and pass the question first, with an optional threshold second. Named parameters remain supported.'
+            ReleaseNotes  = 'Adds Select-Jev to filter original inputs by a yes/no question and Add-JevAnnotation to enrich them with named answers. Includes a reply-triage pipeline example, fixes Test-Jev positional question and threshold arguments, and adds GitHub Actions Pester tests.'
         }
     }
 }

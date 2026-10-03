@@ -17,8 +17,10 @@ foreach ($script in Get-ChildItem -LiteralPath $publicPath -Filter '*.ps1' -File
 Register-JevTypeData
 
 Export-ModuleMember -Function @(
+    'Add-JevAnnotation'
     'Invoke-Jev'
     'New-JevQuestion'
     'New-JevYesNoQuestion'
+    'Select-Jev'
     'Test-Jev'
 )

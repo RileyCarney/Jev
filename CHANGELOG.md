@@ -6,6 +6,9 @@ All notable changes to Jev are documented here.
 
 ### Added
 
+- `Select-Jev` to keep original pipeline inputs that reach a yes/no probability threshold.
+- `Add-JevAnnotation` to enrich pipeline inputs with named answers using `Invoke-Jev`.
+- `Examples/Pipelines` with a reply-triage example that selects messages before annotating them.
 - GitHub Actions workflow to validate the module manifest and run Pester tests on pushes, pull requests, and manual runs.
 
 ### Fixed

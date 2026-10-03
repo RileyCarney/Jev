@@ -67,7 +67,7 @@ $question = New-JevQuestion -Name pageOnCall -Type Noul `
 
 ## Current status
 
-The `0.3.1` preview fixes positional arguments for `Test-Jev`: pipe in the input, pass the question first, and optionally pass a threshold second. Teaching-focused PowerShell demos are available under `Examples/Demos`. The API and examples may continue to evolve as Jev develops.
+The `0.3.1` preview adds `Select-Jev` and `Add-JevAnnotation` for composing semantic selection and annotation in PowerShell pipelines, and fixes positional question and threshold arguments for `Test-Jev`. Runnable examples are available under `Examples/Pipelines` and `Examples/Demos`. The API and examples may continue to evolve as Jev develops.
 
 ## Planned usage
 
@@ -110,6 +110,22 @@ answers may vary. Use `Invoke-Jev` when you need the probability or full respons
 The question and threshold also accept positional arguments:
 `$messages | Test-Jev 'Should this be escalated?' 0.8`.
 
+For pipelines, `Select-Jev` keeps the original inputs that pass a yes/no
+question. `Add-JevAnnotation` uses `Invoke-Jev` to enrich each remaining input
+with named answers:
+
+```powershell
+$messages |
+    Select-Jev 'Does this need a reply?' |
+    Add-JevAnnotation -Question $kind, $urgency |
+    Select-Object State, kind, urgency
+```
+
+Here `$kind` and `$urgency` are named Choice and Score questions.
+`Select-Jev` defaults to a `0.5` threshold; add `-Threshold 0.8` to require a
+higher yes probability. Each input to either command makes one request.
+See [Jev pipelines](Examples/Pipelines/README.md) for the complete runnable example.
+
 ```powershell
 Invoke-Jev -State $feedback -Question $questions -AsJson
 Invoke-Jev -State $feedback -Question $questions -Raw -AsJson
@@ -131,6 +147,8 @@ keeps the input details next to the response and builds a readable summary that
 puts the message next to each decision. Set `TYPESAFE_API_KEY` before running it.
 
 Additional examples:
+
+- [Jev pipelines](Examples/Pipelines/README.md) shows how to compose selection and annotation.
 
 - [PowerShell demos](Examples/Demos/README.md) collects the teaching-focused demos.
 
