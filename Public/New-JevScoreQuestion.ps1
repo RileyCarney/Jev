@@ -47,7 +47,9 @@ function New-JevScoreQuestion {
         throw "Score question '$Name' cannot have more than 10 -Levels values."
     }
     $question = New-JevQuestion -Name $Name -Type Score -Instructions $Instructions -Criteria $levelsArray
-    Add-Member -InputObject $question -NotePropertyName 'LevelCount' -NotePropertyValue $levelsArray.Count
-    Add-Member -InputObject $question -NotePropertyName 'MaxLevel' -NotePropertyValue ($levelsArray.Count - 1)
+
+    # Future implementation.
+    #Add-Member -InputObject $question -NotePropertyName 'LevelCount' -NotePropertyValue $levelsArray.Count
+    #Add-Member -InputObject $question -NotePropertyName 'MaxLevel' -NotePropertyValue ($levelsArray.Count - 1)
     $question
 }

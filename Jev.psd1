@@ -1,6 +1,6 @@
 @{
     RootModule        = 'Jev.psm1'
-    ModuleVersion     = '0.3.0'
+    ModuleVersion     = '0.2.1'
     GUID              = '8b4efb8e-e7e3-4cc8-82ab-ad9314c2980a'
     Author            = 'Jev contributors'
     CompanyName       = ''
@@ -18,7 +18,7 @@
             RepositoryUri = 'https://github.com/dfinke/Jev'
             LicenseUri    = 'https://github.com/dfinke/Jev/blob/main/LICENSE'
             IconUri       = 'https://raw.githubusercontent.com/dfinke/Jev/main/assets/jev-icon.png'
-            ReleaseNotes  = 'Adds New-JevChoiceQuestion and New-JevScoreQuestion'
+            ReleaseNotes  = 'Adds Select-Jev to filter original inputs by a yes/no question and Add-JevAnnotation to enrich them with named answers. Includes a reply-triage pipeline example, fixes Test-Jev positional question and threshold arguments, and adds GitHub Actions Pester tests.'
         }
     }
 }

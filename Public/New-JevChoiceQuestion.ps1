@@ -16,11 +16,7 @@
 
 .PARAMETER Choices
     A hashtable of option names to descriptions or structured criteria.
-
-.PARAMETER FallbackDescription
-    Optional description for a fallback choice. If provided, automatically
-    adds an 'other' or 'none_of_the_above' entry if one does not already exist.
-
+    
 .PARAMETER AllowOther
     When specified, automatically adds 'other' = 'None of the above' to choices
     if not already defined.
@@ -45,7 +41,6 @@ function New-JevChoiceQuestion {
         [object] $Instructions,
         [Parameter(Mandatory, Position = 2)]
         [System.Collections.IDictionary] $Choices,
-        [string] $FallbackDescription,
         [switch] $AllowOther
     )
 
