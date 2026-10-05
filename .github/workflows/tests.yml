@@ -1,0 +1,34 @@
+name: Pester tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Install Pester
+        run: |
+          Install-Module Pester -RequiredVersion 5.4.0 -Scope CurrentUser -Repository PSGallery -Force -SkipPublisherCheck -ErrorAction Stop
+
+      - name: Validate manifest and run tests
+        run: |
+          Import-Module Pester -RequiredVersion 5.4.0 -ErrorAction Stop
+          Test-ModuleManifest -Path ./Jev.psd1 -ErrorAction Stop
+          $result = Invoke-Pester -Path ./Tests -Output Detailed -PassThru
+          if ($result.FailedCount -gt 0 -or $result.TotalCount -eq 0) {
+              throw 'Pester tests failed or no tests were discovered.'
+          }

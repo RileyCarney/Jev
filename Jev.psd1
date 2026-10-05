@@ -1,13 +1,13 @@
 @{
     RootModule        = 'Jev.psm1'
-    ModuleVersion     = '0.2.1'
+    ModuleVersion     = '0.3.1'
     GUID              = '8b4efb8e-e7e3-4cc8-82ab-ad9314c2980a'
     Author            = 'Jev contributors'
     CompanyName       = ''
     Copyright         = '(c) 2026 Doug Finke'
     Description       = 'Turn unstructured input into consistent, structured decisions from PowerShell.'
     PowerShellVersion = '7.0'
-    FunctionsToExport = @('New-JevQuestion', 'New-JevYesNoQuestion', 'Invoke-Jev', 'New-JevChoiceQuestion', 'New-JevScoreQuestion')
+    FunctionsToExport = @('New-JevChoiceQuestion', 'New-JevQuestion', 'New-JevScoreQuestion', 'New-JevYesNoQuestion', 'Invoke-Jev', 'Select-Jev', 'Test-Jev')
     CmdletsToExport   = @()
     VariablesToExport = @()
     AliasesToExport   = @()

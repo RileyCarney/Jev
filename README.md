@@ -10,6 +10,8 @@
 
 Jev asks typed questions—yes/no, choice, and score—and returns consistent, structured decisions through a PowerShell-friendly interface. It connects PowerShell to [TypeSafe AI's Jev model](https://typesafe.ai/blog/introducing-system-one-models-and-jev).
 
+For a related PowerShell decision module using Perplexity, see [PSAIPerplexityDecisions](https://github.com/dfinke/PSAIPerplexityDecisions).
+
 This repository contains the PowerShell module. Gallery publication is handled separately from GitHub releases.
 
 Set `TYPESAFE_API_KEY`, then try two checkout incidents:
@@ -65,7 +67,7 @@ $question = New-JevQuestion -Name pageOnCall -Type Noul `
 
 ## Current status
 
-The `0.2.0` preview adds a yes/no question helper, array `.Jev()` method, JSON output, and new examples. The API and examples may continue to evolve as Jev develops.
+The `0.3.1` preview adds `Select-Jev` and `Add-JevAnnotation` for composing semantic selection and annotation in PowerShell pipelines, and fixes positional question and threshold arguments for `Test-Jev`. Runnable examples are available under `Examples/Pipelines` and `Examples/Demos`. The API and examples may continue to evolve as Jev develops.
 
 ## Planned usage
 
@@ -94,6 +96,36 @@ is raised to a top-level property for easy pipeline use, while the full
 Use `-AsJson` to display the result as JSON while exploring; combine it with
 `-Raw` to see the raw API response as JSON.
 
+For a yes/no check where a Boolean is enough, use `Test-Jev`:
+
+```powershell
+'The customer says they were charged twice and asks for a refund.' |
+    Test-Jev 'Does the customer ask for a refund?'
+# True
+```
+
+`Test-Jev` compares Jev's yes probability with `-Threshold` (default `0.5`) and
+returns `$true` or `$false`. It makes one live request for each piped state, so
+answers may vary. Use `Invoke-Jev` when you need the probability or full response.
+The question and threshold also accept positional arguments:
+`$messages | Test-Jev 'Should this be escalated?' 0.8`.
+
+For pipelines, `Select-Jev` keeps the original inputs that pass a yes/no
+question. `Add-JevAnnotation` uses `Invoke-Jev` to enrich each remaining input
+with named answers:
+
+```powershell
+$messages |
+    Select-Jev 'Does this need a reply?' |
+    Add-JevAnnotation -Question $kind, $urgency |
+    Select-Object State, kind, urgency
+```
+
+Here `$kind` and `$urgency` are named Choice and Score questions.
+`Select-Jev` defaults to a `0.5` threshold; add `-Threshold 0.8` to require a
+higher yes probability. Each input to either command makes one request.
+See [Jev pipelines](Examples/Pipelines/README.md) for the complete runnable example.
+
 ```powershell
 Invoke-Jev -State $feedback -Question $questions -AsJson
 Invoke-Jev -State $feedback -Question $questions -Raw -AsJson
@@ -115,6 +147,10 @@ keeps the input details next to the response and builds a readable summary that
 puts the message next to each decision. Set `TYPESAFE_API_KEY` before running it.
 
 Additional examples:
+
+- [Jev pipelines](Examples/Pipelines/README.md) shows how to compose selection and annotation.
+
+- [PowerShell demos](Examples/Demos/README.md) collects the teaching-focused demos.
 
 - [`Examples/RefundTriage.ps1`](Examples/RefundTriage.ps1) follows TypeSafe's refund request example.
 - [`Examples/SecurityIncidentTriage.ps1`](Examples/SecurityIncidentTriage.ps1) turns a security alert and its context into a response choice.

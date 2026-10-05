@@ -2,6 +2,30 @@
 
 All notable changes to Jev are documented here.
 
+## [0.3.1] - 2026-10-03
+
+### Added
+
+- `Select-Jev` to keep original pipeline inputs that reach a yes/no probability threshold.
+- `Add-JevAnnotation` to enrich pipeline inputs with named answers using `Invoke-Jev`.
+- `Examples/Pipelines` with a reply-triage example that selects messages before annotating them.
+- GitHub Actions workflow to validate the module manifest and run Pester tests on pushes, pull requests, and manual runs.
+
+### Fixed
+
+- `Test-Jev` binds the first positional argument to `Question` and the second to `Threshold`, leaving `State` for pipeline input or `-State`.
+
+## [0.3.0] - 2026-10-02
+
+### Added
+
+- `Test-Jev` for pipeline-friendly yes/no checks that return a Boolean at a caller-selected probability threshold.
+- Teaching-focused PowerShell demos ported from ThinkThen, with sample inputs and a categorized demos index.
+
+### Documentation
+
+- Documented `Test-Jev` behavior, thresholds, and per-input live requests.
+
 ## [0.2.0] - 2026-09-24
 
 ### Added
