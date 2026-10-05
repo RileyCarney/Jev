@@ -54,17 +54,5 @@ function New-JevChoiceQuestion {
         -not $criteria.Contains('none_of_the_above')) {
         $criteria['other'] = 'None of the above.'
     }
-    elseif ($FallbackDescription) {
-        $fallbackKey = if (-not $criteria.Contains('other')) {
-            'other'
-        }
-        elseif (-not $criteria.Contains('none_of_the_above')) {
-            'none_of_the_above'
-        }
-        else {
-            'fallback'
-        }
-        $criteria[$fallbackKey] = $FallbackDescription
-    }
     New-JevQuestion -Name $Name -Type Choice -Instructions $Instructions -Criteria $criteria
 }

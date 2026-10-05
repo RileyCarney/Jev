@@ -14,7 +14,9 @@ Describe 'Jev module' {
         $commands | Should -Contain 'Invoke-Jev'
         $commands | Should -Contain 'New-JevQuestion'
         $commands | Should -Contain 'New-JevYesNoQuestion'
-        $commands.Count | Should -Be 3
+        $commands | Should -Contain 'New-JevChoiceQuestion'
+        $commands | Should -Contain 'New-JevScoreQuestion'
+        $commands.Count | Should -Be 5
     }
 
     It 'uses State as the canonical input parameter with a legacy alias' {
@@ -170,3 +172,237 @@ Describe 'Jev module' {
         $raw.answers.escalate.type | Should -Be 'noul'
     }
 }
+
+Describe 'New-JevChoiceQuestion' {
+    It 'creates a Choice question with standard hashtable choices' {
+        $choices = @{
+            billing   = 'Payment, subscription, or invoice issues.'
+            technical = 'Bugs, API errors, or integration problems.'
+            sales     = 'Pricing, upgrades, or new account questions.'
+        }
+        $question = New-JevChoiceQuestion -Name 'route' -Instructions 'Which team should handle this?' -Choices $choices
+
+        $question.Name | Should -Be 'route'
+        $question.Type | Should -Be 'Choice'
+        $question.Instructions | Should -Be 'Which team should handle this?'
+        $question.Criteria.Count | Should -Be 3
+        $question.Criteria['billing'] | Should -Be 'Payment, subscription, or invoice issues.'
+        $question.Criteria['technical'] | Should -Be 'Bugs, API errors, or integration problems.'
+        $question.Criteria['sales'] | Should -Be 'Pricing, upgrades, or new account questions.'
+        $question.PSObject.Properties.Name | Should -Be @('Name', 'Type', 'Instructions', 'Criteria')
+    }
+
+    It 'creates a Choice question using ordered dictionary preserving order' {
+        $choices = [ordered]@{
+            alpha = 'First option'
+            beta  = 'Second option'
+            gamma = 'Third option'
+        }
+        $question = New-JevChoiceQuestion -Name 'greek' -Instructions 'Select Greek letter' -Choices $choices
+
+        $question.Type | Should -Be 'Choice'
+        @($question.Criteria.Keys) | Should -Be @('alpha', 'beta', 'gamma')
+    }
+
+    It 'supports -Prompt and -Question aliases for -Instructions' {
+        $choices = @{ low = 'Low'; high = 'High' }
+        $qPrompt = New-JevChoiceQuestion -Name 'test1' -Prompt 'Prompt test' -Choices $choices
+        $qQuestion = New-JevChoiceQuestion -Name 'test2' -Question 'Question test' -Choices $choices
+
+        $qPrompt.Instructions | Should -Be 'Prompt test'
+        $qQuestion.Instructions | Should -Be 'Question test'
+    }
+
+    It 'supports positional parameters for Name, Instructions, and Choices' {
+        $choices = @{ apple = 'Fruit'; carrot = 'Vegetable' }
+        $question = New-JevChoiceQuestion 'food' 'Classify food' $choices
+
+        $question.Name | Should -Be 'food'
+        $question.Instructions | Should -Be 'Classify food'
+        $question.Criteria.Count | Should -Be 2
+    }
+
+    It 'adds "other" fallback when -AllowOther is specified' {
+        $choices = @{
+            billing = 'Invoices and payments'
+            tech    = 'Technical bugs'
+        }
+        $question = New-JevChoiceQuestion -Name 'route' -Instructions 'Route ticket' -Choices $choices -AllowOther
+
+        $question.Criteria.Count | Should -Be 3
+        $question.Criteria['other'] | Should -Be 'None of the above.'
+    }
+
+    It 'does not add duplicate "other" when -AllowOther is specified and "other" exists' {
+        $choices = [ordered]@{
+            sales = 'Sales inquiry'
+            other = 'Custom other description'
+        }
+        $question = New-JevChoiceQuestion -Name 'route' -Instructions 'Route ticket' -Choices $choices -AllowOther
+
+        $question.Criteria.Count | Should -Be 2
+        $question.Criteria['other'] | Should -Be 'Custom other description'
+    }
+
+    It 'does not add "other" when -AllowOther is specified and "unknown" exists' {
+        $choices = [ordered]@{
+            sales   = 'Sales inquiry'
+            unknown = 'Unknown route'
+        }
+        $question = New-JevChoiceQuestion -Name 'route' -Instructions 'Route ticket' -Choices $choices -AllowOther
+
+        $question.Criteria.Count | Should -Be 2
+        $question.Criteria.Contains('other') | Should -BeFalse
+        $question.Criteria['unknown'] | Should -Be 'Unknown route'
+    }
+
+    It 'does not add "other" when -AllowOther is specified and "none_of_the_above" exists' {
+        $choices = [ordered]@{
+            sales             = 'Sales inquiry'
+            none_of_the_above = 'Something else'
+        }
+        $question = New-JevChoiceQuestion -Name 'route' -Instructions 'Route ticket' -Choices $choices -AllowOther
+
+        $question.Criteria.Count | Should -Be 2
+        $question.Criteria.Contains('other') | Should -BeFalse
+        $question.Criteria['none_of_the_above'] | Should -Be 'Something else'
+    }
+
+    It 'does not add "other" when -AllowOther is not specified' {
+        $choices = @{
+            yes = 'Yes choice'
+            no  = 'No choice'
+        }
+        $question = New-JevChoiceQuestion -Name 'decision' -Instructions 'Decide' -Choices $choices
+
+        $question.Criteria.Contains('other') | Should -BeFalse
+        $question.Criteria.Count | Should -Be 2
+    }
+
+    It 'rejects empty or null question name' {
+        $choices = @{ a = 'Option A' }
+        {
+            New-JevChoiceQuestion -Name '' -Instructions 'Test' -Choices $choices
+        } | Should -Throw
+        {
+            New-JevChoiceQuestion -Name $null -Instructions 'Test' -Choices $choices
+        } | Should -Throw
+    }
+
+    It 'rejects empty Choices dictionary' {
+        {
+            New-JevChoiceQuestion -Name 'empty' -Instructions 'No choices' -Choices @{}
+        } | Should -Throw "*requires at least one -Criteria entry*"
+    }
+
+    It 'evaluates with Invoke-Jev in mock mode' {
+        $question = New-JevChoiceQuestion -Name 'category' `
+            -Instructions 'Categorize the event' `
+            -Choices @{
+                network = 'Network connectivity or socket errors'
+                auth    = 'Authentication and login issues'
+                other   = 'Other errors'
+            }
+
+        $result = Invoke-Jev -State 'Connection timed out on socket 443.' -Question $question -Mock
+
+        $result.category | Should -Be 'network'
+        $result.answers.category.type | Should -Be 'choice'
+        $result.answers.category.confidence | Should -BeGreaterThan 0
+    }
+}
+
+Describe 'New-JevScoreQuestion' {
+    It 'creates a Score question with ordered string levels' {
+        $levels = @(
+            'Calm - stating facts, no emotional language.'
+            'Concerned but civil - some frustration, polite.'
+            'Very angry - strong language, demanding action.'
+        )
+        $question = New-JevScoreQuestion -Name 'frustration' -Instructions 'How frustrated is the customer?' -Levels $levels
+
+        $question.Name | Should -Be 'frustration'
+        $question.Type | Should -Be 'Score'
+        $question.Instructions | Should -Be 'How frustrated is the customer?'
+        $question.Criteria.Count | Should -Be 3
+        $question.Criteria[0] | Should -Be $levels[0]
+        $question.Criteria[1] | Should -Be $levels[1]
+        $question.Criteria[2] | Should -Be $levels[2]
+        $question.PSObject.Properties.Name | Should -Be @('Name', 'Type', 'Instructions', 'Criteria')
+    }
+
+    It 'supports -Prompt and -Question aliases for -Instructions' {
+        $levels = @('Low', 'High')
+        $qPrompt = New-JevScoreQuestion -Name 'test1' -Prompt 'Prompt test' -Levels $levels
+        $qQuestion = New-JevScoreQuestion -Name 'test2' -Question 'Question test' -Levels $levels
+
+        $qPrompt.Instructions | Should -Be 'Prompt test'
+        $qQuestion.Instructions | Should -Be 'Question test'
+    }
+
+    It 'supports positional parameters for Name, Instructions, and Levels' {
+        $question = New-JevScoreQuestion 'severity' 'Rate severity' @('Low', 'Medium', 'High')
+
+        $question.Name | Should -Be 'severity'
+        $question.Instructions | Should -Be 'Rate severity'
+        $question.Criteria.Count | Should -Be 3
+    }
+
+    It 'accepts the minimum allowed levels (2 levels)' {
+        $question = New-JevScoreQuestion -Name 'binary_score' -Instructions 'Rate 0 or 1' -Levels @('Level 0', 'Level 1')
+
+        $question.Criteria.Count | Should -Be 2
+        $question.Criteria[0] | Should -Be 'Level 0'
+        $question.Criteria[1] | Should -Be 'Level 1'
+    }
+
+    It 'accepts the maximum allowed levels (10 levels)' {
+        $levels = 1..10 | ForEach-Object { "Level $_" }
+        $question = New-JevScoreQuestion -Name 'scale10' -Instructions 'Rate 1 to 10' -Levels $levels
+
+        $question.Criteria.Count | Should -Be 10
+        $question.Criteria[0] | Should -Be 'Level 1'
+        $question.Criteria[9] | Should -Be 'Level 10'
+    }
+
+    It 'rejects fewer than two levels' {
+        {
+            New-JevScoreQuestion -Name 'too_few' -Instructions 'Rate' -Levels @('Single level')
+        } | Should -Throw "Score question 'too_few' requires at least two -Levels values."
+    }
+
+    It 'rejects an empty levels collection' {
+        {
+            New-JevScoreQuestion -Name 'empty' -Instructions 'Rate' -Levels @()
+        } | Should -Throw
+    }
+
+    It 'rejects more than 10 levels' {
+        $levels = 1..11 | ForEach-Object { "Level $_" }
+        {
+            New-JevScoreQuestion -Name 'too_many' -Instructions 'Rate' -Levels $levels
+        } | Should -Throw "Score question 'too_many' cannot have more than 10 -Levels values."
+    }
+
+    It 'rejects empty or null question name' {
+        {
+            New-JevScoreQuestion -Name '' -Instructions 'Rate' -Levels @('Low', 'High')
+        } | Should -Throw
+        {
+            New-JevScoreQuestion -Name $null -Instructions 'Rate' -Levels @('Low', 'High')
+        } | Should -Throw
+    }
+
+    It 'evaluates with Invoke-Jev in mock mode' {
+        $question = New-JevScoreQuestion -Name 'urgency' `
+            -Instructions 'How urgent is this ticket?' `
+            -Levels @('Can wait', 'This week', 'Today (urgent/critical)')
+
+        $result = Invoke-Jev -State 'Outage down critical emergency!' -Question $question -Mock
+
+        $result.urgency | Should -Be 2
+        $result.answers.urgency.type | Should -Be 'score'
+        $result.answers.urgency.legend.'2' | Should -Be 'Today (urgent/critical)'
+    }
+}
+

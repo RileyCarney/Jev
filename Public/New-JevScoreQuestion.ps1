@@ -4,8 +4,7 @@
 
 .DESCRIPTION
     A friendly constructor for Score questions. Score rates content along
-    ordered descriptive levels (2 to 10 levels). Returns the question object
-    annotated with LevelCount and MaxLevel to facilitate 0-1 normalization.
+    ordered descriptive levels (2 to 10 levels).
 
 .PARAMETER Name
     The key used to identify this question's answer in the response.
@@ -46,10 +45,5 @@ function New-JevScoreQuestion {
     if ($levelsArray.Count -gt 10) {
         throw "Score question '$Name' cannot have more than 10 -Levels values."
     }
-    $question = New-JevQuestion -Name $Name -Type Score -Instructions $Instructions -Criteria $levelsArray
-
-    # Future implementation.
-    #Add-Member -InputObject $question -NotePropertyName 'LevelCount' -NotePropertyValue $levelsArray.Count
-    #Add-Member -InputObject $question -NotePropertyName 'MaxLevel' -NotePropertyValue ($levelsArray.Count - 1)
-    $question
+    New-JevQuestion -Name $Name -Type Score -Instructions $Instructions -Criteria $levelsArray
 }
