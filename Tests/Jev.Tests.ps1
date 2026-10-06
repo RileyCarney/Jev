@@ -11,16 +11,15 @@ Describe 'Jev module' {
     It 'exports the public commands' {
         $commands = @(Get-Command -Module Jev | Select-Object -ExpandProperty Name)
 
-        $commands | Should -Contain 'Invoke-Jev'
-        $commands | Should -Contain 'New-JevQuestion'
-        $commands | Should -Contain 'New-JevYesNoQuestion'
-        $commands | Should -Contain 'New-JevChoiceQuestion'
-        $commands | Should -Contain 'New-JevScoreQuestion'
-        $commands.Count | Should -Be 5
-        $commands | Should -Contain 'Test-Jev'
-        $commands | Should -Contain 'Select-Jev'
         $commands | Should -Contain 'Add-JevAnnotation'
-        $commands.Count | Should -Be 6
+        $commands | Should -Contain 'Invoke-Jev'
+        $commands | Should -Contain 'New-JevChoiceQuestion'
+        $commands | Should -Contain 'New-JevQuestion'
+        $commands | Should -Contain 'New-JevScoreQuestion'
+        $commands | Should -Contain 'New-JevYesNoQuestion'
+        $commands | Should -Contain 'Select-Jev'
+        $commands | Should -Contain 'Test-Jev'
+        $commands.Count | Should -Be 8
     }
 
     It 'uses State as the canonical input parameter with a legacy alias' {
